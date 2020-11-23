@@ -33,12 +33,14 @@
         </div>
     </div>
     <script>
+        let userList = [];
 
-        const sendRequest = (method, url, data = '') => {
+        // Reuseable Function for every API Request
+        const sendRequest = (method, url, data = '', callback) => {
             const xhttp = new XMLHttpRequest();
             xhttp.onreadystatechange = function () {
                 if (xhttp.readyState == 4 && xhttp.status == 200) {
-                    console.log(JSON.parse(this.responseText));
+                    callback(JSON.parse(this.responseText));
                 }
             };
             xhttp.open(method, url, true);
@@ -47,20 +49,29 @@
         }
         // to retrive user list 
         document.getElementById('get').addEventListener('click', () => {
-            sendRequest('GET', 'http://localhost:3000/users' );
+            sendRequest('GET', 'http://localhost:3000/users','', (users) => {
+                console.log(users)
+                userList = users.data;
+            });
         })
         //to create user list
         document.getElementById('post').addEventListener('click', () => {
-            sendRequest('POST', 'http://localhost:3000/users', "name=Dhana" );
+            sendRequest('POST', 'http://localhost:3000/users', "name=Dhana", (data) => {
+                console.log(data)
+            });
         })
        
         //to update user list
         document.getElementById('put').addEventListener('click', () => {
-            sendRequest('PUT', 'http://localhost:3000/users/df9b0cdc-27fa-478c-84bf-5160733e16f7', "name=Lakshmi" );
+            sendRequest('PUT', `http://localhost:3000/users/${userList[userList.length - 1].id}`, "name=Lakshmi",  (data) => {
+                console.log(data)
+            });
         })
         //to remove user list
         document.getElementById('delete').addEventListener('click', () => {
-            sendRequest('DELETE', 'http://localhost:3000/users/df9b0cdc-27fa-478c-84bf-5160733e16f7');
+            sendRequest('DELETE', `http://localhost:3000/users/${userList[userList.length - 1].id}`, '',  (data) => {
+                console.log(data)
+            });
         })
     </script>
 </body>
